@@ -45,9 +45,7 @@ function App() {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         //user has logged in....
-        console.log("authuser", authUser);
         setUser(authUser);
-        console.log("userObj", user);
       } else {
         //user has logged out
         setUser(null);
@@ -76,9 +74,13 @@ function App() {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((authUser) => {
-        return authUser.user.updateProfile({
+        let userInfo = authUser.user.updateProfile({
           displayName: username,
         });
+        setUser({
+          displayName: username,
+        });
+        return userInfo;
       })
       .catch((error) => alert(error.message));
     setOpen(false);
@@ -107,19 +109,19 @@ function App() {
             </center>
             <Input
               type="text"
-              placeholder="username"
+              placeholder="UserName"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <Input
               type="text"
-              placeholder="email"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Input
               type="password"
-              placeholder="password"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -143,13 +145,13 @@ function App() {
             </center>
             <Input
               type="text"
-              placeholder="email"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Input
               type="password"
-              placeholder="password"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -182,9 +184,11 @@ function App() {
           {posts.map(({ id, post }) => (
             <Post
               key={id}
+              postId={id}
               imageUrl={post.imageUrl}
               username={post.username}
               caption={post.caption}
+              user={user}
             />
           ))}
         </div>
@@ -207,7 +211,9 @@ function App() {
       {user?.displayName ? (
         <ImageUpload username={user.displayName} />
       ) : (
-        <h3>Sorry you need to login to upload</h3>
+        <h3 className="app__loginmessage">
+          Sorry! you need to login to upload
+        </h3>
       )}
     </div>
   );

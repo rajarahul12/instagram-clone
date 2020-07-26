@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@material-ui/core";
+import { Button, Input } from "@material-ui/core";
 import { storage, db } from "./firebase";
 import firebase from "firebase";
 import "./ImageUpload.css";
@@ -24,6 +24,7 @@ function ImageUpload({ username }) {
         const progress = Math.round(
           (snapShot.bytesTransferred / snapShot.totalBytes) * 100
         );
+        console.log("Progress : ", progress);
         setProgress(progress);
       },
       (error) => {
@@ -55,13 +56,18 @@ function ImageUpload({ username }) {
     <div className="imageupload">
       <progress className="imageupload__progress" value={progress} max="100" />
 
-      <input
+      <Input
         type="text"
         placeholder="Enter a caption..."
-        onChange={(e) => setCaption(e.target.value)}
         value={caption}
+        onChange={(e) => setCaption(e.target.value)}
       />
-      <input type="file" onChange={handleChange} />
+      <input
+        className="imageupload__file"
+        type="file"
+        onChange={handleChange}
+      />
+
       <Button className="imageupload__button" onClick={handleUpload}>
         Upload
       </Button>

@@ -8,6 +8,14 @@
   margin-bottom: 10px;
 }
 
+.imageupload > * {
+  margin: 10px;
+}
+
+.imageupload__file {
+  margin: auto;
+}
+
 .imageupload__progress {
   width: 100%;
 }
