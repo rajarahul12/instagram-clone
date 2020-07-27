@@ -10,6 +10,23 @@
   margin: 20px;
 }
 
+.app__loginContainer {
+  display: flex;
+  align-items: center;
+}
+
+.app__addposticon {
+  height: 20px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.app__loader {
+  display: flex;
+  justify-content: center;
+  height: 24px;
+}
+
 .app__header {
   position: sticky;
   top: 0;

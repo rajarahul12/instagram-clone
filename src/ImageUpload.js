@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Button, Input } from "@material-ui/core";
+import { Button, Input, CircularProgress } from "@material-ui/core";
 import { storage, db } from "./firebase";
 import firebase from "firebase";
 import "./ImageUpload.css";
 
-function ImageUpload({ username }) {
+function ImageUpload({ closePost, username }) {
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
   const [caption, setCaption] = useState("");
+  const [loader, setLoader] = useState(false);
 
   const handleChange = (e) => {
     if (e.target.files[0]) {
@@ -16,6 +17,15 @@ function ImageUpload({ username }) {
   };
 
   const handleUpload = () => {
+    if (caption.length === 0) {
+      alert("Provide a caption");
+      return;
+    }
+    if (!image) {
+      alert("Select an image");
+      return;
+    }
+    setLoader(true);
     const uploadTask = storage.ref(`images/${image.name}`).put(image);
     uploadTask.on(
       "state_changed",
@@ -28,6 +38,7 @@ function ImageUpload({ username }) {
         setProgress(progress);
       },
       (error) => {
+        setLoader(false);
         console.log(error);
         alert(error.message);
       },
@@ -48,13 +59,15 @@ function ImageUpload({ username }) {
         setProgress(0);
         setCaption("");
         setImage(null);
+        setLoader(false);
+        closePost();
       }
     );
   };
 
   return (
     <div className="imageupload">
-      <progress className="imageupload__progress" value={progress} max="100" />
+      {/* <progress className="imageupload__progress" value={progress} max="100" /> */}
 
       <Input
         type="text"
@@ -67,10 +80,15 @@ function ImageUpload({ username }) {
         type="file"
         onChange={handleChange}
       />
-
-      <Button className="imageupload__button" onClick={handleUpload}>
-        Upload
-      </Button>
+      {loader ? (
+        <div className="imageupload__loader">
+          <CircularProgress />
+        </div>
+      ) : (
+        <Button className="imageupload__button" onClick={handleUpload}>
+          Upload
+        </Button>
+      )}
     </div>
   );
 }

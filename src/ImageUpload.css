@@ -13,7 +13,13 @@
 }
 
 .imageupload__file {
-  margin: auto;
+  /* margin: auto; */
+}
+
+.imageupload__loader {
+  display: flex;
+  justify-content: center;
+  height: 24px;
 }
 
 .imageupload__progress {

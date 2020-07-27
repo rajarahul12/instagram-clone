@@ -4,9 +4,10 @@ import Post from "./Post";
 import { db, auth } from "./firebase";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
-import { Button, Input } from "@material-ui/core";
+import { Button, Input, CircularProgress } from "@material-ui/core";
 import ImageUpload from "./ImageUpload";
 import InstagramEmbed from "react-instagram-embed";
+import add from "./imgs/add.svg";
 
 function getModalStyle() {
   const top = 50;
@@ -36,10 +37,12 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
   const [openSignIn, setOpenSignIn] = useState(false);
+  const [openPost, setOpenPost] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [loadSignin, setLoadSignin] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -71,9 +74,19 @@ function App() {
 
   const signUp = (event) => {
     event.preventDefault();
+    setLoadSignin(true);
+    if (username.length === 0) {
+      alert("Provide an username");
+      setLoadSignin(false);
+      return;
+    }
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((authUser) => {
+        setLoadSignin(false);
+        setEmail("");
+        setPassword("");
+        setOpen(false);
         let userInfo = authUser.user.updateProfile({
           displayName: username,
         });
@@ -82,17 +95,33 @@ function App() {
         });
         return userInfo;
       })
-      .catch((error) => alert(error.message));
-    setOpen(false);
+      .catch((error) => {
+        setLoadSignin(false);
+        alert(error.message);
+        // setOpen(false);
+      });
   };
 
   const signIn = (event) => {
     event.preventDefault();
+    setLoadSignin(true);
     auth
       .signInWithEmailAndPassword(email, password)
-      .catch((error) => alert(error.message));
+      .then((authUser) => {
+        setOpenSignIn(false);
+        setEmail("");
+        setPassword("");
+        setLoadSignin(false);
+      })
+      .catch((error) => {
+        setLoadSignin(false);
+        alert(error.message);
+        // setOpen(false);
+      });
+  };
 
-    setOpenSignIn(false);
+  const closePost = () => {
+    setOpenPost(false);
   };
 
   return (
@@ -108,6 +137,7 @@ function App() {
               />
             </center>
             <Input
+              required={true}
               type="text"
               placeholder="UserName"
               value={username}
@@ -125,10 +155,15 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-
-            <Button type="submit" onClick={signUp}>
-              Sign Up
-            </Button>
+            {loadSignin ? (
+              <div className="app__loader">
+                <CircularProgress />
+              </div>
+            ) : (
+              <Button type="submit" onClick={signUp}>
+                Sign Up
+              </Button>
+            )}
           </form>
         </div>
       </Modal>
@@ -156,11 +191,32 @@ function App() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <Button type="submit" onClick={signIn}>
-              Sign In
-            </Button>
+            {loadSignin ? (
+              <div className="app__loader">
+                <CircularProgress />
+              </div>
+            ) : (
+              <Button type="submit" onClick={signIn}>
+                Sign In
+              </Button>
+            )}
           </form>
         </div>
+      </Modal>
+
+      <Modal open={openPost} onClose={() => setOpenPost(false)}>
+        {user?.displayName ? (
+          <div style={modalStyle} className={classes.paper}>
+            <center>
+              <img
+                className="app__headerImage"
+                alt="Instagram logo"
+                src="https://www.instagram.com/static/images/web/mobile_nav_type_logo-2x.png/1b47f9d0e595.png"
+              />
+            </center>
+            <ImageUpload closePost={closePost} username={user.displayName} />{" "}
+          </div>
+        ) : null}
       </Modal>
 
       <div className="app__header">
@@ -170,7 +226,15 @@ function App() {
           alt="Instagram"
         />
         {user ? (
-          <Button onClick={() => auth.signOut()}>Logout</Button>
+          <div className="app__loginContainer">
+            <img
+              onClick={() => setOpenPost(true)}
+              className="app__addposticon"
+              src={add}
+              alt="Add Post"
+            />
+            <Button onClick={() => auth.signOut()}>Logout</Button>
+          </div>
         ) : (
           <div className="app__loginContainer">
             <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
@@ -207,14 +271,6 @@ function App() {
           />
         </div>
       </div>
-
-      {user?.displayName ? (
-        <ImageUpload username={user.displayName} />
-      ) : (
-        <h3 className="app__loginmessage">
-          Sorry! you need to login to upload
-        </h3>
-      )}
     </div>
   );
 }
