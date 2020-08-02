@@ -12,13 +12,13 @@ Live Demo - [Click here](https://instagram-clone-2e5d0.web.app/)
 
 <img src="./screenshots/home.png" width="100%" height="100%"/>
 
-### SignUp
-
-<img src="./screenshots/signup.png" width="100%" height="100%"/>
-
 ### Login
 
 <img src="./screenshots/login.png" width="100%" height="100%"/>
+
+### SignUp
+
+<img src="./screenshots/signup.png" width="100%" height="100%"/>
 
 ### Create Post
 
