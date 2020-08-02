@@ -1,4 +1,4 @@
-# Image Gallery
+# INSTAGRAM CLONE
 
 Instagram Clone created using React and Firebase. This allows users to Login or Signup and create posts. Other users can comment on the posts.
 
