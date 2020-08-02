@@ -3,6 +3,7 @@ import { Button, Input, CircularProgress } from "@material-ui/core";
 import { storage, db } from "./firebase";
 import firebase from "firebase";
 import "./ImageUpload.css";
+import { motion } from "framer-motion";
 
 function ImageUpload({ closePost, username }) {
   const [image, setImage] = useState(null);
@@ -68,8 +69,14 @@ function ImageUpload({ closePost, username }) {
   return (
     <div className="imageupload">
       {/* <progress className="imageupload__progress" value={progress} max="100" /> */}
+      <motion.div
+        className="progress-bar"
+        initial={{ width: 0 }}
+        animate={{ width: progress + "%" }}
+      ></motion.div>
 
       <Input
+        className="imageupload__caption"
         type="text"
         placeholder="Enter a caption..."
         value={caption}

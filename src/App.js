@@ -8,6 +8,7 @@ import { Button, Input, CircularProgress } from "@material-ui/core";
 import ImageUpload from "./ImageUpload";
 import InstagramEmbed from "react-instagram-embed";
 import add from "./imgs/add.svg";
+import { motion } from "framer-motion";
 
 function getModalStyle() {
   const top = 50;
@@ -127,7 +128,7 @@ function App() {
   return (
     <div className="app">
       <Modal open={open} onClose={() => setOpen(false)}>
-        <div style={modalStyle} className={classes.paper}>
+        <motion.div style={modalStyle} className={classes.paper}>
           <form className="app__signup">
             <center>
               <img
@@ -165,7 +166,7 @@ function App() {
               </Button>
             )}
           </form>
-        </div>
+        </motion.div>
       </Modal>
 
       <Modal open={openSignIn} onClose={() => setOpenSignIn(false)}>
@@ -244,18 +245,24 @@ function App() {
       </div>
 
       <div className="app__posts">
-        <div className="app__postsLeft">
+        <motion.div layout className="app__postsLeft">
           {posts.map(({ id, post }) => (
-            <Post
-              key={id}
-              postId={id}
-              imageUrl={post.imageUrl}
-              username={post.username}
-              caption={post.caption}
-              user={user}
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+            >
+              <Post
+                key={id}
+                postId={id}
+                imageUrl={post.imageUrl}
+                username={post.username}
+                caption={post.caption}
+                user={user}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
         <div className="app__postsRight">
           <InstagramEmbed
             url="https://www.instagram.com/p/CA4WJuyMwY_/"
